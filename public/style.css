@@ -2,7 +2,7 @@
 
 :root{
     --primary-color: #FD951F;
-    --secondary-color: #1fbefd;
+    --secondary-color: #1f83fd;
 
 }
 
@@ -44,6 +44,18 @@ body{
 }
 .button:hover{
     background-color: #c06e10;
+}
+.button.delete{
+    background-color: lightgrey;
+}
+.button.edit{
+    background-color: var(--secondary-color);
+}
+.button.delete:hover{
+    background-color: rgb(223,62,62);
+} 
+.button.edit:hover{
+    background-color: #009bbd;
 }
 header,footer{
     background-color: black;
@@ -164,6 +176,18 @@ form .item select{
 
 form .item textarea{
     min-height: 150px;
+}
+form .item span{
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    border-radius: 16px;
+    color: white;
+    margin-right: 4px;
+    margin-top: 8px;
+    display: inline-block;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
 }
 form .fields{
     margin-bottom: 64px;
