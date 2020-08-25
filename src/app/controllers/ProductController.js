@@ -1,6 +1,7 @@
 const Category = require('../models/Category')
 const Product = require('../models/Product')
 const {formatPrice} = require('../../lib/utils')
+const File = require('../models/File')
 
 module.exports = {
     create(req,res){
@@ -9,7 +10,7 @@ module.exports = {
             return res.render('products/create',{categories})
         }).catch((err)=>{
             throw new Error(err)
-        })
+        }) 
     },
     async post(req,res){
         //Logica de salvar
@@ -19,9 +20,14 @@ module.exports = {
                 return res.send('Please,fill all fields')
             }
         }
+
+        if(req.files.length == 0) return res.send('Please, send at least one image')
+
         let results = await Product.create(req.body)
         const productId = results.rows[0].id
 
+        const filesPromise = req.files.map(file => File.create({...file, product_id: productId}))
+        await Promise.all(filesPromise)
         return res.redirect(`products/${productId}`)
     },
     async edit(req,res){
@@ -33,10 +39,20 @@ module.exports = {
         product.old_price = formatPrice(product.old_price)
         product.price = formatPrice(product.price)
 
+
+        //Get Category
         results = await Category.all()
         const categories = results.rows
 
-        return res.render("products/edit.njk",{product,categories})
+        //getImages
+        results = await Product.files(product.id)
+        let files = results.rows
+        files = files.map(file => ({
+            ...file,
+            src: `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+        }))
+
+        return res.render("products/edit.njk",{product,categories,files})
     },
     async put(req,res){
         const keys = Object.keys(req.body)
