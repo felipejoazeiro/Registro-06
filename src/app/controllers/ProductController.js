@@ -57,9 +57,23 @@ module.exports = {
     async put(req,res){
         const keys = Object.keys(req.body)
         for(key of keys){
-            if(req.body[key] == ""){
-                return res.send('Please,fill all fields')
+            if(req.body[key] == "" && key != "removed_files"){
+                return res.send(req.body)
             }
+        }
+
+        if(req.file.length != 0){
+            const newFilesPromise = req.files.map(file=>File.create({...file, product_id: req.body.id}))
+            await Promise.all(newFilesPromise)
+        }
+
+        if(req.body.removed_files){
+            const removedFiles = req.body.removed_files.split(",")
+            const lastIndex = removedFiles.length -1
+            removedFiles.splice(lastIndex, 1)
+            
+            const removedFilesPromise = removedFiles.map(id=>delete(id))
+            await Promise.all(removedFilesPromise)
         }
         req.body.price = req.body.price.replace(/\D/g,"")
         if(req.body.old_price != req.body.price){
