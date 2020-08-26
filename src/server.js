@@ -18,6 +18,6 @@ nunjucks.configure('src/app/views',{
     noCache: true
 })
 
-server.listen(5000,()=>{
+server.listen(4000,()=>{
     console.log('Servidor rodando na porta 3000')
 })
