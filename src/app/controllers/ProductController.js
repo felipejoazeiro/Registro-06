@@ -4,13 +4,15 @@ const {formatPrice,date} = require('../../lib/utils')
 const File = require('../models/File')
 
 module.exports = {
-    create(req,res){
-        Category.all().then((results)=>{
+    async create(req,res){
+        try{
+            let results = await Category.all()
             const categories = results.rows
-            return res.render('products/create',{categories})
-        }).catch((err)=>{
-            throw new Error(err)
-        }) 
+            return res.render('products/create.njk',{categories})
+        } catch(error){
+            console.log(`Database Error ${error}`)
+        }
+        
     },
     async post(req,res){
         //Logica de salvar
